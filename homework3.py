@@ -108,8 +108,8 @@ class TilePuzzle(object):
             state = frontier.pop(0) #pop first in queue from list
             explored.append(state) #add that to explored list
 
-            print state.get_board()
-            print state.get_moves_performed()
+            #print state.get_board()
+            #print state.get_moves_performed()
 
             if state.is_solved():
                 print state.get_board()
@@ -120,25 +120,6 @@ class TilePuzzle(object):
                     frontier.append(neighbor)
 
 
-
-                # dup_count = 0
-                # for y in state:
-                #     if neighbor.get_board() == y.get_board():
-                #         dup_count +=1
-                # if dup_count < 1:
-                #     state.append(neighbor)
-                #     explored.append(neighbor)
-
-            
-
-
-
-
-
-b1 = [[1,2,5],[3,4,0],[6,7,8]]
-p1 = TilePuzzle(b1)
-res=p1.find_solutions_iddfs()
-print res
 
 
 

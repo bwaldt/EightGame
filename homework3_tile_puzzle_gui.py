@@ -1,5 +1,6 @@
 import sys
 import Tkinter
+import time
 
 import homework3
 
@@ -49,13 +50,14 @@ class Board(Tkinter.Frame):
         self.puzzle.perform_move(direction)
         self.update_tiles()
 
+
     def update_tiles(self):
         puzzle_board = self.puzzle.get_board()
         for row in range(self.rows):
             for col in range(self.cols):
                 self.tiles[row][col].set_state(puzzle_board[row][col])
 
-    def animate_moves(self, moves, delay=100):
+    def animate_moves(self, moves, delay=1000):
         if moves:
             def stage_1():
                 self.puzzle.perform_move(moves[0])
@@ -93,13 +95,13 @@ class TilePuzzleGUI(Tkinter.Frame):
         menu.pack(side=Tkinter.RIGHT)
 
     def scramble_click(self):
-        self.puzzle.scramble(self.rows * self.cols * 20)
+        self.puzzle.scramble(10)
         self.board.update_tiles()
 
     def solve_iddfs_click(self):
        # self.board.animate_moves(next(self.puzzle.find_solutions_iddfs()))
        res = self.puzzle.find_solutions_iddfs()
-       print res
+       #print res
         
        self.board.animate_moves(res)
 
