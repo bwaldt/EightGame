@@ -97,7 +97,11 @@ class TilePuzzleGUI(Tkinter.Frame):
         self.board.update_tiles()
 
     def solve_iddfs_click(self):
-        self.board.animate_moves(next(self.puzzle.find_solutions_iddfs()))
+       # self.board.animate_moves(next(self.puzzle.find_solutions_iddfs()))
+       res = self.puzzle.find_solutions_iddfs()
+       print res
+        
+       self.board.animate_moves(res)
 
     def solve_a_star_click(self):
         self.board.animate_moves(self.puzzle.find_solution_a_star())

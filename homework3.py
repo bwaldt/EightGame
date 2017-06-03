@@ -9,6 +9,8 @@ student_name = "Type your full name here."
 ############################################################
 
 import random
+import copy
+import time
 
 
 
@@ -31,6 +33,10 @@ class TilePuzzle(object):
         self.zero = [(i, board.index(0)) for i, board in enumerate(board) if 0 in board]
         self.zero_row = self.zero[0][0]
         self.zero_col = self.zero[0][1]
+        self.moves_performed = []
+
+    def __eq__(self,other):
+        return self.__dict__==other.__dict__
 
     def get_board(self):
         return self.board
@@ -63,34 +69,76 @@ class TilePuzzle(object):
         while moves < num_moves:
             if self.perform_move(random.choice(input)) == True:
                 moves += 1
-        print moves
+
     def is_solved(self):
         test = create_tile_puzzle(self.rows,self.cols)
-        print self.get_board() == test.get_board()
+        return self.get_board() == test.get_board()
 
 
 
     def copy(self):
-        return self
+        return copy.deepcopy(self)
 
     def successors(self):
-        input = ["up", "down", "right", "left"]
-        ans = ()
-        for y in input:
-            p2 = self.copy()
-            p2.perform_move(y)
-            ans = (y , p2.get_board() )
-            print ans
+        moves = ["up", "down", "right", "left"]
+        succesors = []
+        for direction in moves:
+            copy = self.copy()
+            is_possible = copy.perform_move(direction)
+            if is_possible:
+                succesors.append((direction,copy))
+        return succesors
+
+    def set_moves_performed(self,direction):
+        self.moves_performed.append(direction)
+
+    def get_moves_performed(self):
+        return self.moves_performed
 
     # Required
     def find_solutions_iddfs(self):
-        pass
+        frontier = []
+        explored = []
+        actions = []
+        frontier.append(self.copy())
+        while True:
+            if len(frontier) == 0:
+                return False
 
-    # Required
-    def find_solution_a_star(self):
-        pass
+            state = frontier.pop(0) #pop first in queue from list
+            explored.append(state) #add that to explored list
+
+            print state.get_board()
+            print state.get_moves_performed()
+
+            if state.is_solved():
+                print state.get_board()
+                return state.get_moves_performed()
+            for move, neighbor in state.successors():
+                if neighbor not in frontier + explored:
+                    neighbor.set_moves_performed(move)
+                    frontier.append(neighbor)
 
 
-p = create_tile_puzzle(3, 3)
-p.successors()
+
+                # dup_count = 0
+                # for y in state:
+                #     if neighbor.get_board() == y.get_board():
+                #         dup_count +=1
+                # if dup_count < 1:
+                #     state.append(neighbor)
+                #     explored.append(neighbor)
+
+            
+
+
+
+
+
+b1 = [[1,2,5],[3,4,0],[6,7,8]]
+p1 = TilePuzzle(b1)
+res=p1.find_solutions_iddfs()
+print res
+
+
 
