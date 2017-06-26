@@ -11,6 +11,7 @@ student_name = "Type your full name here."
 import random
 import copy
 import time
+import Queue as Q
 
 
 
@@ -37,6 +38,12 @@ class TilePuzzle(object):
 
     def __eq__(self,other):
         return self.__dict__==other.__dict__
+
+    def __iter__(self):
+        return TilePuzzle(self.board)
+
+    def __getitem__(self, item):
+        return TilePuzzle(self.board)
 
     def get_board(self):
         return self.board
@@ -121,5 +128,58 @@ class TilePuzzle(object):
 
 
 
+    def herustic(self):
+        herMisplaced = 0
+        state = self.get_board()
+        solution = create_tile_puzzle(3,3)
+        solution = solution.get_board()
+        for i in range(9):
+            if i <= 2:
+                if state[0][i] != solution[0][i]:
+                    herMisplaced += 1
+            if i >= 3 and i <= 5:
+                if state[1][i % 3] != solution[1][i % 3]:
+                    herMisplaced += 1
+            if i > 5:
+                if state[2][i % 3] != solution[2][i % 3]:
+                    herMisplaced += 1
+        return herMisplaced
 
 
+    def find_solution_a_star(self):
+        frontier = Q.PriorityQueue()
+        explored = []
+        actions = []
+        h = self.herustic()
+        frontier.put((h,self.copy()))
+        while True:
+            if frontier.empty():
+                return False
+
+            state = frontier.get()#pop first in queue, queue is tuple of { h(n) + g(n) , Board }
+            state = state[1] # only take board object, ignore cost
+            explored.append(state) #add that to explored list
+
+            #print state.get_board()
+            #print state.get_moves_performed()
+
+            if state.is_solved():
+                print state.get_moves_performed()
+                return state.get_moves_performed()
+            for move, neighbor in state.successors():
+                if neighbor not in explored:
+                    neighbor.set_moves_performed(move)
+                    h = neighbor.herustic()
+                    moves = neighbor.get_moves_performed()
+                    moves = len(moves)
+                    frontier.put((h+moves,neighbor))
+
+
+
+
+
+
+#b1 = [[1, 2, 3], [4, 5, 0], [7, 8, 6]]
+#p = TilePuzzle(b1)
+
+#print p.find_solution_a_star()
